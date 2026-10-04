@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFind | Smart Lost & Found</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>CampusFind</span>
+            </div>
+            <div class="nav-links">
+                <button id="homeBtn" class="nav-link active">Home</button>
+                <button id="reportBtn" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Report Item</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="hero">
+            <h1>Lost something? Found something?</h1>
+            <p>Connect with your campus community to recover lost belongings.</p>
+            
+            <div class="search-bar">
+                <div class="search-input-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="Search for items...">
+                </div>
+                <select id="filterCategory" class="filter-select">
+                    <option value="all">All Categories</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="accessories">Accessories</option>
+                    <option value="books">Books & Supplies</option>
+                    <option value="other">Other</option>
+                </select>
+                <select id="filterStatus" class="filter-select">
+                    <option value="all">All Statuses</option>
+                    <option value="lost">Lost</option>
+                    <option value="found">Found</option>
+                    <option value="returned">Returned</option>
+                </select>
+            </div>
+        </header>
+
+        <section class="dashboard">
+            <div class="dashboard-header">
+                <h2>Recently Reported</h2>
+                <div class="stats">
+                    <span class="stat-badge"><i class="fa-solid fa-search"></i> <span id="totalLost">Lost: 0</span></span>
+                    <span class="stat-badge"><i class="fa-solid fa-hand-holding-heart"></i> <span id="totalFound">Found: 0</span></span>
+                </div>
+            </div>
+            
+            <div class="items-grid" id="itemsGrid">
+                <!-- Items injected via JS -->
+            </div>
+            
+            <div id="noResults" class="no-results hidden">
+                <i class="fa-solid fa-box-open"></i>
+                <h3>No items found</h3>
+                <p>Try adjusting your search or filters.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Report Modal -->
+    <dialog id="reportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Report an Item</h2>
+                <button id="closeModalBtn" class="close-btn" aria-label="Close modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="reportForm">
+                <div class="form-row type-selector">
+                    <label class="radio-card">
+                        <input type="radio" name="itemType" value="lost" required checked>
+                        <span class="radio-content">
+                            <i class="fa-solid fa-search"></i> I Lost Something
+                        </span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="itemType" value="found" required>
+                        <span class="radio-content">
+                            <i class="fa-solid fa-hand-holding-heart"></i> I Found Something
+                        </span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemName">Item Name <span class="required">*</span></label>
+                    <input type="text" id="itemName" name="itemName" required placeholder="e.g., Blue Hydroflask">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="itemCategory">Category <span class="required">*</span></label>
+                        <select id="itemCategory" name="itemCategory" required>
+                            <option value="" disabled selected>Select Category</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="clothing">Clothing</option>
+                            <option value="accessories">Accessories</option>
+                            <option value="books">Books & Supplies</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemDate">Date (Lost/Found) <span class="required">*</span></label>
+                        <input type="date" id="itemDate" name="itemDate" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemLocation">Location <span class="required">*</span></label>
+                    <input type="text" id="itemLocation" name="itemLocation" required placeholder="e.g., Main Library, 2nd Floor">
+                </div>
+
+                <div class="form-group">
+                    <label for="itemDescription">Description <span class="required">*</span></label>
+                    <textarea id="itemDescription" name="itemDescription" rows="3" required placeholder="Provide distinguishing details..."></textarea>
+                </div>
+
+                <div class="form-group image-upload-group">
+                    <label>Upload Image</label>
+                    <div class="image-upload-wrapper" id="imageUploadWrapper">
+                        <input type="file" id="itemImage" name="itemImage" accept="image/*">
+                        <div class="upload-placeholder">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span>Click to upload image (Optional)</span>
+                        </div>
+                        <img id="imagePreview" class="image-preview hidden" alt="Image preview">
+                        <button type="button" id="removeImageBtn" class="remove-image-btn hidden" aria-label="Remove image">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="contactName">Your Name <span class="required">*</span></label>
+                        <input type="text" id="contactName" name="contactName" required placeholder="e.g., John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="contactInfo">Contact Info <span class="required">*</span></label>
+                        <input type="text" id="contactInfo" name="contactInfo" required placeholder="Email or Phone">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="cancelBtn" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Report</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- Item Details Modal -->
+    <dialog id="detailsModal" class="modal">
+        <div class="modal-content details-content">
+            <div class="modal-header">
+                <h2>Item Details</h2>
+                <button id="closeDetailsBtn" class="close-btn" aria-label="Close modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="details-body" id="detailsBody">
+                <!-- Injected via JS -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="markReturnedBtn" class="btn btn-success hidden"><i class="fa-solid fa-check"></i> Mark as Returned</button>
+                <button type="button" class="btn btn-secondary" id="closeDetailsFooterBtn">Close</button>
+            </div>
+        </div>
+    </dialog>
+
+    <script src="script.js"></script>
+</body>
+</html>
